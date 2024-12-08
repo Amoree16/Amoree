@@ -231,6 +231,74 @@ Top 5 UTM: 1.FortinetFortigate: syet
            2. Checkpoint
            3.4 Cisco
 
+----
+Firewall profile no1: use extendedACL vs NamedExtendedAcl
+ex1 you are the admin for pogo sites
+www.web310.com open only http,https, ping (80,443,ping)
+www.web311.com open only dns, https  ==> (53,443) - 6 lines
+
+GOLDEN FIREWALL FORMULA: paloalto,fortinet, cisco, checkpoint
+
+protocol            hacker victim     port
+tcp, udp,icmp,ip     Any   web310/11
+
+conf t
+service timestamps log datetime
+service timestamps debug datetime
+logging 10.41.1.10
+logging trap 5
+NO ip access-list Extended FWP1
+ip access-list Extended FWP1
+Permit tcp Any host www.web310.com eq 80 log
+Permit tcp Any host www.web310.com eq 443 log
+Permit icmp Any host www.web310.com log
+Permit tcp Any host www.web311.com eq 53 log
+Permit tcp Any host www.web311.com eq 443 log
+Permit tcp Any host www.web311.com eq 22 log
+Int Gi 3
+ip access-group FWP1 in
+
+
+REMOVE FIREWALL
+
+conf t
+Int Gi 3
+NO ip access-list Extended FWP1
+end
+
+TAKAS: Control shift 6 bitaw X
+
+ex 2you are the admin for pogo sites
+www.web310.com open only ssh, dns, http (22,53,80)
+www.web311.com open only telnet,ssh,https, ping/icmp (23,22,443)=> 7
+
+conf t
+NO ip access-list Extended FWP2
+ip access-list Extended FWP2
+Permit tcp Any host www.web310.com eq 22 log
+Permit tcp Any host www.web310.com eq 53 log
+Permit tcp Any host www.web310.com eq 80 log
+Permit tcp Any host www.web311.com eq 23 log
+Permit tcp Any host www.web311.com eq 22 log
+Permit tcp Any host www.web311.com eq 443 log
+Permit icmp Any host www.web311.com log
+Int Gi 3
+ip access-group FWP2 in
+
+ex 2you are the admin for pogo sites super praning
+www.web310.com open only 443
+www.web311.com open only ping
+
+conf t
+NO ip access-list Extended FWP3
+ip access-list Extended FWP3
+Permit tcp Any host www.web310.com eq 443 log
+Permit icmp Any host www.web311.com log
+Int Gi 3
+ip access-group FWP3 in
+
+
+
 CYBERSECURITY TASK7: PROTECTING YOUR CORPORATE WEB APPS.
 EX.1 CREATE A FIREWALL POLICY NAMED Policy1 TO OPEN
 WWW.WEB8.COM HAS HTTP AND HTTPS AS OPEN
